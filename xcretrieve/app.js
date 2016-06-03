@@ -19,34 +19,36 @@ var options = {
 };
 
 var updateData = function () {
-  if (!coords)
-    return;
-
-  var latLon = new LatLon(coords.latitude, coords.longitude);
-  var d = new Date();
-
-  document.getElementById("locationCoords").innerHTML = 'Koordinātes: ' + latLon.toString('dm', 4);
-  accuracy.innerHTML = '(±' + parseFloat(coords.accuracy).toFixed(0) + 'm)';
-  altitude.innerHTML = coords.altitude ? 'Augstums: ' + parseFloat(coords.altitude).toFixed(1) + 'm' : '';
-  altitudeAccuracy.innerHTML = coords.altitudeAccuracy ? '(±' + parseFloat(coords.altitudeAccuracy).toFixed(0) + 'm)' : '';
-  timestamp.innerHTML = d.toLocaleString();
-
-  
-  var e = document.getElementById("inputRetrieveAction");
-  var inputRetrieveAction = e.options[e.selectedIndex].value;
+  var body = '';
   var buttonOpenTextApp = document.getElementById("buttonOpenTextApp");
-  setSMSLink(buttonOpenTextApp,
-    '#' + pilotNrElement.value + ': ' + inputRetrieveAction + ' ' +
-    latLon.toString('dm', 4)
-    + ' [' + d.getHours() + ':' + d.getMinutes() + ']'
-  );
+  
+  if (coords) {
+    var latLon = new LatLon(coords.latitude, coords.longitude);
+    var d = new Date();
+    
+    document.getElementById("locationCoords").innerHTML = 'Koordinātes: ' + latLon.toString('dm', 4);
+    accuracy.innerHTML = '(±' + parseFloat(coords.accuracy).toFixed(0) + 'm)';
+    altitude.innerHTML = coords.altitude ? 'Augstums: ' + parseFloat(coords.altitude).toFixed(1) + 'm' : '';
+    altitudeAccuracy.innerHTML = coords.altitudeAccuracy ? '(±' + parseFloat(coords.altitudeAccuracy).toFixed(0) + 'm)' : '';
+    timestamp.innerHTML = d.toLocaleString();
 
-  if (e.selectedIndex > 0 || !latLon) {
-    buttonOpenTextApp.classList.remove('disabled');
+
+    var e = document.getElementById("inputRetrieveAction");
+    var inputRetrieveAction = e.options[e.selectedIndex].value;    
+    body = '#' + pilotNrElement.value + ': ' + inputRetrieveAction + ' ' +
+      latLon.toString('dm', 4)
+      + ' [' + d.getHours() + ':' + d.getMinutes() + ']';
+
+
+    if (e.selectedIndex > 0 || !latLon) {
+      buttonOpenTextApp.classList.remove('disabled');
+    }
+    else {
+      buttonOpenTextApp.classList.add('disabled');
+    }
   }
-  else {
-    buttonOpenTextApp.classList.add('disabled');
-  }
+  setSMSLink(buttonOpenTextApp, body);
+  document.getElementById("textBody").innerHTML = body;
 
 };
 
@@ -124,7 +126,7 @@ try {
   storedPilotNo = JSON.parse(localStorage.getItem("pilotNo"));
   storedPilotNo.timestamp = new Date(storedPilotNo.timestamp);
 } catch (e) {
-  console.error(e);
+  console.log(e);
 }
 
 var validTimeStamp = new Date();
