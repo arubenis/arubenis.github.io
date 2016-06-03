@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html manifest_="./offline.appcache">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>XC retrīvs</title>
+  <link rel="apple-touch-icon" href="./images/ic_my_location_white.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="./images/ic_my_location_white_2x.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="./images/ic_my_location_white_3x.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="./images/ic_my_location_white_3x.png">
+
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link rel='stylesheet' href='./styles.css' type='text/css' media='all' />
+</head>
+
+<body>
+
+  <div class="container-fluid">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">
+        XC retrīvs
+      </a>
+        </div>
+      </div>
+    </nav>
+
+    <form id="mainContent" class="form-horizontal">
+      <div class="form-group" >
+        <label for="inputPilotNo" class="col-sm-2 control-label">Pilota numurs</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="inputPilotNo" placeholder="Pilota numurs" onchange="onPilotNoChange()">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="inputRetrieveAction" class="col-sm-2 control-label">Ziņa retrīvam</label>
+        <div class="col-sm-10">
+          <select class="form-control" id="inputRetrieveAction" onchange="onInputRetrieveActionChange()">
+            <option value = "">---Izvēlies ziņu---</option>            
+            <option value = "GATAVS">Gatavs retrīvam</option>
+            <option value = "GATAVS 20 min">Gatavs retrīvam pēc 20 min</option>
+            <option value = "GATAVS nesteidzos">Gatavs retrīvam, bet nesteidzos</option>
+            <option value = "BEZ RETRIVA">Retrīvs nav nepieciešams</option>
+            <option value = "LOST">Nezinu kur atrodos</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Atrašanās vieta</label>
+        <div class="col-sm-10">
+          <p class="form-control-static"><span id="locationCoords"></span> <span class="small" id="accuracy"></span></p>
+          <p class="form-control-static"><span id="locationAltitude"></span> <span class="small" id="locationAltitudeAccuracy"></span></p>
+          <p class="form-control-static small"><span id="timestamp"></span></p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <a href="" class="btn btn-primary disabled" role="button" id="buttonOpenTextApp">Īsziņa</a>
+        </div>
+      </div>
+    </form>
+    <div id="spinner" class="text-center h4">
+      <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+    </div>
+  </div>
+
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/geodesy/vector3d.js"></script>
+  <script src="js/geodesy/latlon-ellipsoidal.js"></script>
+  <script src="js/geodesy/utm.js"></script>
+  <script src="js/geodesy/dms.js"></script>
+  <script src="./app.js"></script>
+</body>
+
+</html>

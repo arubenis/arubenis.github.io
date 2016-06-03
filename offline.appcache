@@ -1,0 +1,21 @@
+CACHE MANIFEST
+# v6
+
+./styles.css
+./app.js
+./js/geodesy/dms.js
+./js/geodesy/latlon-ellipsoidal.js
+./js/geodesy/utm.js
+./js/geodesy/vector3d.js
+./css/bootstrap.min.css
+./js/jquery.min.js
+./js/bootstrap.min.js
+./fonts/glyphicons-halflings-regular.woff2
+./fonts/glyphicons-halflings-regular.woff
+./images/ic_my_location_white.png
+./images/ic_my_location_white_2x.png
+./images/ic_my_location_white_3x.png
+./images/ic_my_location_white_3x.png
+
+NETWORK:
+*
