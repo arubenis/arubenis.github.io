@@ -5,6 +5,12 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <script>
+    if (window.location.host.indexOf('github.io') > -1 && window.location.protocol != "https:"){
+    window.location.protocol = "https";
+  }
+
+  </script>
   <title>XC retrīvs</title>
   <link rel="apple-touch-icon" href="./images/ic_my_location_white.png">
   <link rel="apple-touch-icon" sizes="76x76" href="./images/ic_my_location_white_2x.png">
@@ -13,6 +19,7 @@
 
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link rel='stylesheet' href='./styles.css' type='text/css' media='all' />
+
 </head>
 
 <body>
@@ -29,7 +36,7 @@
     </nav>
 
     <div id="mainContent" class="form-horizontal">
-      <div class="form-group" >
+      <div class="form-group">
         <label for="inputPilotNo" class="col-sm-2 control-label">Pilota numurs</label>
         <div class="col-sm-10">
           <input type="text" class="form-control" id="inputPilotNo" placeholder="Pilota numurs" onchange="onPilotNoChange()">
@@ -68,7 +75,7 @@
           <a href="" class="btn btn-primary disabledInput" role="button" id="buttonOpenTextApp">Īsziņa</a>
         </div>
       </div>
-      
+
     </div>
     <div id="spinner" class="text-center h4">
       <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
