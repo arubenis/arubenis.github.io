@@ -78,10 +78,11 @@ function showSpinner(show) {
 showSpinner(true);
 
 function setSMSLink(element, text) {
+  var uriText = encodeURI(text);
   if (mobileOperatingSystem === 'ios') {
-    element.setAttribute("href", "sms:&body=" + text);
+    element.setAttribute("href", "sms:&body=" + uriText);
   } else {
-    element.setAttribute("href", "sms:?body=" + text);
+    element.setAttribute("href", "sms:?body=" + uriText);
   }
 }
 
