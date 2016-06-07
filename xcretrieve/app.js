@@ -35,7 +35,7 @@ var updateData = function () {
 
     var e = document.getElementById("inputRetrieveAction");
     var inputRetrieveAction = e.options[e.selectedIndex].value;    
-    body = '#' + pilotNrElement.value + ': ' + inputRetrieveAction + ' ' +
+    body = pilotNrElement.value + ': ' + inputRetrieveAction + ' ' +
       latLon.toString('dm', 4)
       + ' [' + d.getHours() + ':' + d.getMinutes() + ']';
 
