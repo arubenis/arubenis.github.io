@@ -18,6 +18,11 @@ var options = {
   maximumAge: 0
 };
 
+function pad(num, padgingStr) {
+    var s = padgingStr + num;
+    return s.substr(s.length-padgingStr.length);
+}
+
 var updateData = function () {
   var body = '';
   var buttonOpenTextApp = document.getElementById("buttonOpenTextApp");
@@ -37,7 +42,7 @@ var updateData = function () {
     var inputRetrieveAction = e.options[e.selectedIndex].value;    
     body = pilotNrElement.value + ': ' + inputRetrieveAction + ' ' +
       latLon.toString('dm', 4)
-      + ' [' + d.getHours() + ':' + d.getMinutes() + ']';
+      + ' [' + pad(d.getHours(),'00') + ':' + pad(d.getMinutes(),'00') + ']';
 
 
     if (e.selectedIndex > 0 || !latLon) {
