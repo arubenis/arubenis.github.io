@@ -1,5 +1,25 @@
 'use strict';
 
+window.addEventListener('load', function (e) {
+
+  window.applicationCache.addEventListener('updateready', function (e) {
+    if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+      window.location.reload();
+    }
+  }, false);
+
+}, false);
+
+var getInputRetrieveAction = function () {
+  var radios = document.getElementsByName('inputRetrieveAction');
+  for (var i = 0; i < radios.length; i++) {
+    if (radios[i].checked) {
+      return radios[i].value;
+    }
+  }
+  return null;
+};
+
 var latlon_ddmm = document.getElementById("latlon_ddmm");
 var latlon_dec = document.getElementById("latlon_dec");
 var accuracy = document.getElementById("accuracy");
@@ -8,10 +28,14 @@ var altitude = document.getElementById("locationAltitude");
 var altitudeAccuracy = document.getElementById("locationAltitudeAccuracy");
 var elementMainContent = document.getElementById("mainContent");
 var spinner = document.getElementById("spinner");
+var pilotNrElement = document.getElementById("inputPilotNo");
+var retirevePhoneNoElement = document.getElementById("retirevePhoneNo");
 
 
 var coords = null;
 
+var hasError = false;
+var quietError = true;
 var options = {
   enableHighAccuracy: true,
   timeout: 5000,
@@ -19,18 +43,52 @@ var options = {
 };
 
 function pad(num, padgingStr) {
-    var s = padgingStr + num;
-    return s.substr(s.length-padgingStr.length);
+  var s = padgingStr + num;
+  return s.substr(s.length - padgingStr.length);
+}
+var showError = function (errorText) {
+  if (!quietError) {
+    document.getElementById("error").classList.remove("hidden");
+    document.getElementById("error").focus();
+    document.getElementById("error-text").innerHTML = errorText;
+  }
+  hasError = true;
+}
+var hideError = function () {
+  document.getElementById("error").classList.add("hidden");
+  hasError = false;
+  quietError = true;
+}
+
+var pilotId = '';
+var inputRetrieveAction = null;
+var validate = function () {
+  if (pilotId.trim() === '') {
+    showError("Ievadi sacensību dalībnieka kārtas numuru");
+    return false;
+  }
+  if (inputRetrieveAction == null) {
+    showError("Izvēlies ziņu ko sūtīt");
+    return false;
+  }
+
+  hideError();
+  return true;
 }
 
 var updateData = function () {
+  pilotId = pilotNrElement.value;
+  inputRetrieveAction = getInputRetrieveAction();
+
+  validate();
+
   var body = '';
   var buttonOpenTextApp = document.getElementById("buttonOpenTextApp");
-  
+
   if (coords) {
     var latLon = new LatLon(coords.latitude, coords.longitude);
     var d = new Date();
-    
+
     document.getElementById("locationCoords").innerHTML = 'Koordinātes: ' + latLon.toString('dm', 4);
     accuracy.innerHTML = '(±' + parseFloat(coords.accuracy).toFixed(0) + 'm)';
     altitude.innerHTML = coords.altitude ? 'Augstums: ' + parseFloat(coords.altitude).toFixed(1) + 'm' : '';
@@ -38,21 +96,23 @@ var updateData = function () {
     timestamp.innerHTML = d.toLocaleString();
 
 
-    var e = document.getElementById("inputRetrieveAction");
-    var inputRetrieveAction = e.options[e.selectedIndex].value;    
-    body = pilotNrElement.value + ': ' + inputRetrieveAction + ' ' +
-      latLon.toString('dm', 4)
-      + ' [' + pad(d.getHours(),'00') + ':' + pad(d.getMinutes(),'00') + ']';
+    
+    body = pilotNrElement.value + ': ' + (inputRetrieveAction != null ? inputRetrieveAction : '');
+    if (inputRetrieveAction != 'OK') {
+      body += ' ' + latLon.toString('dm', 4)
+    }
+    //+ ' [' + pad(d.getHours(), '00') + ':' + pad(d.getMinutes(), '00') + ']';
 
-
-    if (e.selectedIndex > 0 || !latLon) {
+    /*
+    if (inputRetrieveAction == null || !latLon) {
       buttonOpenTextApp.classList.remove('disabled');
     }
     else {
       buttonOpenTextApp.classList.add('disabled');
     }
+    */
   }
-  setSMSLink(buttonOpenTextApp, body);
+  setSMSLink(buttonOpenTextApp, body, retirevePhoneNoElement.value);
   document.getElementById("textBody").innerHTML = body;
 
 };
@@ -82,12 +142,17 @@ function showSpinner(show) {
 }
 showSpinner(true);
 
-function setSMSLink(element, text) {
-  var uriText = encodeURI(text);
-  if (mobileOperatingSystem === 'ios') {
-    element.setAttribute("href", "sms:&body=" + uriText);
-  } else {
-    element.setAttribute("href", "sms:?body=" + uriText);
+function setSMSLink(element, text, phone) {
+  if (hasError) {
+    element.removeAttribute("href");
+  }
+  else {
+    var uriText = encodeURI(text);
+    if (mobileOperatingSystem === 'ios') {
+      element.setAttribute("href", "sms:"+phone+"&body=" + uriText);
+    } else {
+      element.setAttribute("href", "sms:"+phone+"?body=" + uriText);
+    }
   }
 }
 
@@ -114,31 +179,65 @@ function getLocation() {
 
 getLocation();
 
-
-var onPilotNoChange = function () {
+var onPilotNoChange = function() {
   localStorage.setItem("pilotNo", JSON.stringify({ timestamp: new Date(), value: pilotNrElement.value }));
+  updateData();  
+}
+
+var onRetrievePhoneNoChange = function () {
+  localStorage.setItem("retirevePhoneNo", retirevePhoneNoElement.value);
   updateData();
 }
 var onInputRetrieveActionChange = function () {
   updateData();
 }
 
-
-var pilotNrElement = document.getElementById("inputPilotNo");
-
 var storedPilotNo = {}
-
 try {
   storedPilotNo = JSON.parse(localStorage.getItem("pilotNo"));
-  storedPilotNo.timestamp = new Date(storedPilotNo.timestamp);
+  storedPilotNo.timestamp = new Date(storedPilotNo.timestamp);  
 } catch (e) {
   console.log(e);
 }
 
+var storedRetrievePhoneNo = localStorage.getItem("retirevePhoneNo");
+
 var validTimeStamp = new Date();
 validTimeStamp.setDate(validTimeStamp.getDate() - 5);
+
+if (storedRetrievePhoneNo)
+{
+  retirevePhoneNoElement.value = storedRetrievePhoneNo; 
+}
 
 if (storedPilotNo && storedPilotNo.timestamp && validTimeStamp < storedPilotNo.timestamp) {
   pilotNrElement.value = storedPilotNo.value;
   updateData();
 }
+
+var inputRetrieveActions = document.getElementsByName('inputRetrieveAction');
+for (var i = 0; i < inputRetrieveActions.length; i++){
+  var element = inputRetrieveActions[i];
+  element.addEventListener("click", updateData);
+}
+
+var openSmsApp = function () {
+  quietError = false;
+  return validate();
+}
+
+var showHelpText = function(object, show) {
+  var helpTextId = object.getAttribute('id') + '-HelpText';
+  var helpTextElement = document.getElementById(helpTextId);
+  if (helpTextElement){
+    if (show) {
+      helpTextElement.classList.remove("hidden");
+    }
+    else {
+      helpTextElement.classList.add("hidden");
+    }
+  }
+    
+}
+
+validate();
