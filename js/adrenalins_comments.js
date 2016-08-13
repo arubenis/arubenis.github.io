@@ -1,3 +1,6 @@
+'use strict'
+
+//<script type="text/javascript" src="https://arubenis.github.io/js/adrenalins_comments.js"/>
 var comment_reordering = {
     locked: false,
     wait: false,
