@@ -114,6 +114,6 @@ if (!r_comment_addons) {
           comment_reordering.reorder();
         }, false);
         */
-    }
-    var r_comment_addons = true;
+    }    
 }
+var r_comment_addons = true;
