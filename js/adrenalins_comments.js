@@ -1,6 +1,6 @@
 'use strict'
 
-//<script type="text/javascript" src="https://arubenis.github.io/js/adrenalins_comments.js"/>
+//<script type="text/javascript" src="https://arubenis.github.io/js/adrenalins_comments.js" hide/>
 if (!r_comment_addons) {
     var comment_reordering = {
         locked: false,
@@ -97,6 +97,19 @@ if (!r_comment_addons) {
         return undefined;
     }
 
+    var hideMe = function(){
+        var comments = document.querySelectorAll("li[id^=fos_comment_]");
+        //console.log("abcd", comments);
+        for (var i = 0; i < comments.length; i++) {
+            var element = comments[i];
+          //  console.log(element);
+            var scriptElement = element.querySelector("script[src*=adrenalins_comments]");
+            if (scriptElement && scriptElement.hasAttribute("hide")){
+                element.parentElement.removeChild(element);
+            }            
+        }
+    }
+
     var setLastCommentHref = function (a) {
         var comments = document.querySelectorAll("li[id^=fos_comment_]");
         var lastCommentId = '';
@@ -127,11 +140,13 @@ if (!r_comment_addons) {
             }, false);            
             
         }
-        /*
+        hideMe();
+        
         commentThreadElement.addEventListener("DOMNodeInserted", function (ev) {
-          comment_reordering.reorder();
+          //comment_reordering.reorder();
+          hideMe();
         }, false);
-        */
+        
     }
 }
 var r_comment_addons = true;
