@@ -130,8 +130,8 @@ if (!r_comment_addons) {
             var a = document.createElement('a');
             a.setAttribute('href', '#');
             a.onclick = function () { comment_reordering.reorder(); return true; };
-            a.innerHTML = "&#8668;";
-            a.style.fontSize = "large"
+            a.innerHTML = "Jaunākais komentārs";
+            //a.style.fontSize = "large"
             commentsHeading.appendChild(a);
             
             setLastCommentHref(a);            
