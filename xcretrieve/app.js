@@ -94,13 +94,28 @@ var updateData = function () {
     altitude.innerHTML = coords.altitude ? 'Augstums: ' + parseFloat(coords.altitude).toFixed(1) + 'm' : '';
     altitudeAccuracy.innerHTML = coords.altitudeAccuracy ? '(±' + parseFloat(coords.altitudeAccuracy).toFixed(0) + 'm)' : '';
     timestamp.innerHTML = d.toLocaleString();
-
-
     
-    body = pilotNrElement.value + ': ' + (inputRetrieveAction != null ? inputRetrieveAction : '');
-    if (inputRetrieveAction != 'OK') {
-      body += ' ' + latLon.toString('dm', 4)
-    }
+    body = pilotNrElement.value + ': ';
+
+		var coordText = latLon.toString('dm', 4);
+		
+		switch (inputRetrieveAction) {
+			case "RETRIEVE": 
+				body += coordText;
+				break;
+			case "RETRIEVE FAST": 
+				body += coordText + " R";
+				break;
+			case "OK": 
+				body += "OK";
+				break;
+			default:
+				body += inputRetrieveAction +" "+coordText;
+		}
+    
+    /*body = pilotNrElement.value + ': ' + (inputRetrieveAction != null ? inputRetrieveAction : '');
+    */
+    
     //+ ' [' + pad(d.getHours(), '00') + ':' + pad(d.getMinutes(), '00') + ']';
 
     /*
