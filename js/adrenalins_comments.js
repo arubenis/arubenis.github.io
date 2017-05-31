@@ -1,3 +1,4 @@
+/*
 'use strict'
 
 //<script type="text/javascript" src="https://arubenis.github.io/js/adrenalins_comments.js" hide></script>
@@ -150,3 +151,4 @@ if (!r_comment_addons) {
     }
 }
 var r_comment_addons = true;
+*/
