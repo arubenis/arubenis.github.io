@@ -10,8 +10,8 @@ window.addEventListener('load', function (e) {
 
 }, false);
 
-var getInputRetrieveAction = function () {
-  var radios = document.getElementsByName('inputRetrieveAction');
+var getRadioSelected = function (name) {
+  var radios = document.getElementsByName(name);
   for (var i = 0; i < radios.length; i++) {
     if (radios[i].checked) {
       return radios[i].value;
@@ -22,7 +22,6 @@ var getInputRetrieveAction = function () {
 
 var latlon_ddmm = document.getElementById("latlon_ddmm");
 var latlon_dec = document.getElementById("latlon_dec");
-var accuracy = document.getElementById("accuracy");
 var timestamp = document.getElementById("timestamp");
 var altitude = document.getElementById("locationAltitude");
 var altitudeAccuracy = document.getElementById("locationAltitudeAccuracy");
@@ -30,7 +29,6 @@ var elementMainContent = document.getElementById("mainContent");
 var spinner = document.getElementById("spinner");
 var pilotNrElement = document.getElementById("inputPilotNo");
 var retirevePhoneNoElement = document.getElementById("retirevePhoneNo");
-
 
 var coords = null;
 
@@ -78,7 +76,8 @@ var validate = function () {
 
 var updateData = function () {
   pilotId = pilotNrElement.value;
-  inputRetrieveAction = getInputRetrieveAction();
+  inputRetrieveAction = getRadioSelected('inputRetrieveAction');
+  let inputCoordsFormat = getRadioSelected('inputCoordsFormat');
 
   validate();
 
@@ -89,33 +88,43 @@ var updateData = function () {
     var latLon = new LatLon(coords.latitude, coords.longitude);
     var d = new Date();
 
-    document.getElementById("locationCoords").innerHTML = 'Koordinātes: ' + latLon.toString('dm', 4);
-    accuracy.innerHTML = '(±' + parseFloat(coords.accuracy).toFixed(0) + 'm)';
+    var coordsString = {
+      dd: coords.latitude.toFixed(6) + ', ' + coords.longitude.toFixed(6),
+      dmm: latLon.toString('dm', 4),
+      google_maps:"https://www.google.com/maps/place/"+coords.latitude.toFixed(6) + ',' + coords.longitude.toFixed(6),
+    }
+
+    document.getElementById("location-link-google-maps").setAttribute('href',coordsString.google_maps);
+
+    document.getElementById("locationCoords-dd").innerHTML = coordsString.dd;
+    document.getElementById("locationCoords-dmm").innerHTML = coordsString.dmm;
+    document.getElementById("accuracy-dd").innerHTML = '(±' + parseFloat(coords.accuracy).toFixed(0) + 'm)';
+    document.getElementById("accuracy-dmm").innerHTML = '(±' + parseFloat(coords.accuracy).toFixed(0) + 'm)';
     altitude.innerHTML = coords.altitude ? 'Augstums: ' + parseFloat(coords.altitude).toFixed(1) + 'm' : '';
     altitudeAccuracy.innerHTML = coords.altitudeAccuracy ? '(±' + parseFloat(coords.altitudeAccuracy).toFixed(0) + 'm)' : '';
     timestamp.innerHTML = d.toLocaleString();
-    
+
     body = pilotNrElement.value + ': ';
 
-		var coordText = latLon.toString('dm', 4);
-		
-		switch (inputRetrieveAction) {
-			case "RETRIEVE": 
-				body += coordText;
-				break;
-			case "RETRIEVE FAST": 
-				body += coordText + " R";
-				break;
-			case "OK": 
-				body += "OK";
-				break;
-			default:
-				body += inputRetrieveAction +" "+coordText;
-		}
-    
+    var coordText = coordsString[inputCoordsFormat];
+
+    switch (inputRetrieveAction) {
+      case "RETRIEVE":
+        body += coordText;
+        break;
+      case "RETRIEVE FAST":
+        body += "R " + coordText;
+        break;
+      case "OK":
+        body += "OK";
+        break;
+      default:
+        body += coordText;
+    }
+
     /*body = pilotNrElement.value + ': ' + (inputRetrieveAction != null ? inputRetrieveAction : '');
     */
-    
+
     //+ ' [' + pad(d.getHours(), '00') + ':' + pad(d.getMinutes(), '00') + ']';
 
     /*
@@ -164,9 +173,9 @@ function setSMSLink(element, text, phone) {
   else {
     var uriText = encodeURI(text);
     if (mobileOperatingSystem === 'ios') {
-      element.setAttribute("href", "sms:"+phone+"&body=" + uriText);
+      element.setAttribute("href", "sms:" + phone + "&body=" + uriText);
     } else {
-      element.setAttribute("href", "sms:"+phone+"?body=" + uriText);
+      element.setAttribute("href", "sms:" + phone + "?body=" + uriText);
     }
   }
 }
@@ -194,23 +203,20 @@ function getLocation() {
 
 getLocation();
 
-var onPilotNoChange = function() {
+var onPilotNoChange = function () {
   localStorage.setItem("pilotNo", JSON.stringify({ timestamp: new Date(), value: pilotNrElement.value }));
-  updateData();  
+  updateData();
 }
 
 var onRetrievePhoneNoChange = function () {
   localStorage.setItem("retirevePhoneNo", retirevePhoneNoElement.value);
   updateData();
 }
-var onInputRetrieveActionChange = function () {
-  updateData();
-}
 
 var storedPilotNo = {}
 try {
   storedPilotNo = JSON.parse(localStorage.getItem("pilotNo"));
-  storedPilotNo.timestamp = new Date(storedPilotNo.timestamp);  
+  storedPilotNo.timestamp = new Date(storedPilotNo.timestamp);
 } catch (e) {
   console.log(e);
 }
@@ -220,9 +226,8 @@ var storedRetrievePhoneNo = localStorage.getItem("retirevePhoneNo");
 var validTimeStamp = new Date();
 validTimeStamp.setDate(validTimeStamp.getDate() - 5);
 
-if (storedRetrievePhoneNo)
-{
-  retirevePhoneNoElement.value = storedRetrievePhoneNo; 
+if (storedRetrievePhoneNo) {
+  retirevePhoneNoElement.value = storedRetrievePhoneNo;
 }
 
 if (storedPilotNo && storedPilotNo.timestamp && validTimeStamp < storedPilotNo.timestamp) {
@@ -231,20 +236,20 @@ if (storedPilotNo && storedPilotNo.timestamp && validTimeStamp < storedPilotNo.t
 }
 
 var inputRetrieveActions = document.getElementsByName('inputRetrieveAction');
-for (var i = 0; i < inputRetrieveActions.length; i++){
+for (var i = 0; i < inputRetrieveActions.length; i++) {
   var element = inputRetrieveActions[i];
   element.addEventListener("click", updateData);
 }
-
-var openSmsApp = function () {
-  quietError = false;
-  return validate();
+var inputCoordsFormat = document.getElementsByName('inputCoordsFormat');
+for (var i = 0; i < inputCoordsFormat.length; i++) {
+  var element = inputCoordsFormat[i];
+  element.addEventListener("click", updateData);
 }
 
-var showHelpText = function(object, show) {
+var showHelpText = function (object, show) {
   var helpTextId = object.getAttribute('id') + '-HelpText';
   var helpTextElement = document.getElementById(helpTextId);
-  if (helpTextElement){
+  if (helpTextElement) {
     if (show) {
       helpTextElement.classList.remove("hidden");
     }
@@ -252,7 +257,7 @@ var showHelpText = function(object, show) {
       helpTextElement.classList.add("hidden");
     }
   }
-    
+
 }
 
 validate();
