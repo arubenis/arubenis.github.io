@@ -12,3 +12,14 @@
     from { transform: scale(1) rotate(0deg);}
     to { transform: scale(1) rotate(360deg);}
 }
+.text-body {
+    word-wrap: break-word;
+    border-color: #000!important;
+    margin-top: 7px!important;
+    border: 1px solid #ccc!important;
+    padding: .1em ;
+    box-sizing: inherit;
+    display: block;
+    font-size: 12px;
+    min-height: inherit;
+}
