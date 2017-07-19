@@ -98,8 +98,7 @@ var updateData = function () {
 
     document.getElementById("locationCoords-dd").innerHTML = coordsString.dd;
     document.getElementById("locationCoords-dmm").innerHTML = coordsString.dmm;
-    document.getElementById("accuracy-dd").innerHTML = '(±' + parseFloat(coords.accuracy).toFixed(0) + 'm)';
-    document.getElementById("accuracy-dmm").innerHTML = '(±' + parseFloat(coords.accuracy).toFixed(0) + 'm)';
+    document.getElementById("accuracy").innerHTML = '(±' + parseFloat(coords.accuracy).toFixed(0) + 'm)';
     altitude.innerHTML = coords.altitude ? 'Augstums: ' + parseFloat(coords.altitude).toFixed(1) + 'm' : '';
     altitudeAccuracy.innerHTML = coords.altitudeAccuracy ? '(±' + parseFloat(coords.altitudeAccuracy).toFixed(0) + 'm)' : '';
     timestamp.innerHTML = d.toLocaleString();
